@@ -202,6 +202,11 @@ void nhImage::RenderImage( const char* fileName )
 // -------------------------------------------------------------------------- //
 bool nhImage::InitColors( void )
 {
+    if ( IsInitialized() )
+    {
+        return true;
+    }
+
     p_redCh   = (float *) malloc(p_resX * p_resY * sizeof(float));
     p_greenCh = (float *) malloc(p_resX * p_resY * sizeof(float));
     p_blueCh  = (float *) malloc(p_resX * p_resY * sizeof(float));
