@@ -1,6 +1,6 @@
 #include "nhMandelbrotOrbit.h"
 
-int main()
+int main(int argc, char *argv[])
 {
     nhMandelbrotOrbit* image = new nhMandelbrotOrbit(-2.0f, 1.0f, -1.0f, 1.0f, 1200,800);
     if ( !image->InitializeFromFile("temp.png") )
@@ -15,7 +15,19 @@ int main()
         color.Randomize();
         image->DrawNewOrbit(color);
     }
-    image->RenderImage("new.png");
+
+    int numThreads = -1;
+    if ( argc > 1 )
+    {
+        numThreads = atoi(argv[1]);
+    }
+
+    if ( numThreads > 0 )
+    {
+        std::cout << "Requested " << numThreads << " threads for rendering\n";
+    }
+
+    image->RenderImage("new.png", numThreads);
     delete image;
     return 0;
 }

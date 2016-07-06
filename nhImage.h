@@ -40,7 +40,7 @@ public:
     virtual bool InitColors( void );
 
     // Renders this image to a png file
-    void RenderImage( const char* fileName );
+    void RenderImage( const char* fileName, int numThreads = -1 );
 
     // Gets the point (x,y) lying on pixel px, py which
     // corresponds to coordinate of the provided pixel corner
@@ -149,7 +149,7 @@ bool nhImage::PixelAtPoint( const double x, const double y, int &px, int &py )
 
 // -------------------------------------------------------------------------- //
 // -------------------------------------------------------------------------- //
-void nhImage::RenderImage( const char* fileName )
+void nhImage::RenderImage( const char* fileName, int numThreads )
 {
     // This function is implemented to make use of multiple machine cores
     // to allow faster rendering of large images. It will split the image in
@@ -162,7 +162,11 @@ void nhImage::RenderImage( const char* fileName )
 
     std::cout<<"Rendering Image of resolution "<<p_resX<<"x"<<p_resY<<std::endl;
 
-    #pragma omp parallel 
+    if ( numThreads > 0 )
+    {
+        omp_set_num_threads(numThreads);
+    }
+    #pragma omp parallel
     {
     int threadID = omp_get_thread_num();
     if ( threadID == 0 )
