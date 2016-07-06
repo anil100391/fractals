@@ -162,7 +162,7 @@ void nhImage::RenderImage( const char* fileName )
 
     std::cout<<"Rendering Image of resolution "<<p_resX<<"x"<<p_resY<<std::endl;
 
-    #pragma omp parallel
+    #pragma omp parallel 
     {
     int threadID = omp_get_thread_num();
     if ( threadID == 0 )
@@ -178,8 +178,8 @@ void nhImage::RenderImage( const char* fileName )
 
     char localFileName[512];
     sprintf(localFileName, "%s%d", fileName, threadID);
-    int startJJ = threadID * ( p_resY / 2 );
-    for ( int jj = startJJ; jj < startJJ + p_resY / 2; ++jj )
+    int startJJ = threadID * ( p_resY / omp_get_num_threads() );
+    for ( int jj = startJJ; jj < startJJ + p_resY / omp_get_num_threads(); ++jj )
     {
         for ( int ii = 0; ii < p_resX; ++ii )
         {
