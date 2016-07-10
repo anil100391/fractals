@@ -47,11 +47,11 @@ public:
     // corresponds to coordinate of the provided pixel corner
     bool PointAtPixel( const int px, const int py,
                        double &x, double &y,
-                       const PIXEL_CORNER loc = CENTER );
+                       const PIXEL_CORNER loc = CENTER ) const;
 
     // Gets the pixel lying on point
     bool PixelAtPoint( const double x, const double y,
-                       int &px, int &py );
+                       int &px, int &py ) const;
 
     bool IsInitialized() const
     {
@@ -92,7 +92,7 @@ protected:
 // -------------------------------------------------------------------------- //
 bool nhImage::PointAtPixel( const int px, const int py,
                             double &x, double &y,
-                            const nhImage::PIXEL_CORNER loc )
+                            const nhImage::PIXEL_CORNER loc ) const
 {
     if ( px < 0 || px > p_resX || py < 0 || py > p_resY )
     {
@@ -133,6 +133,7 @@ bool nhImage::PointAtPixel( const int px, const int py,
 // -------------------------------------------------------------------------- //
 // -------------------------------------------------------------------------- //
 bool nhImage::PixelAtPoint( const double x, const double y, int &px, int &py )
+                                                                           const
 {
     if ( x > p_xMax || x < p_xMin || y > p_yMax || y < p_yMin )
     {
