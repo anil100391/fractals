@@ -55,14 +55,14 @@ void nhMandelbrotOrbit::DrawNewOrbit( const nhColor &color )
         nhImage::PixelAtPoint(x0, y0, px, py);
         // Average the color info at this pixel
         pixelIndex = py * p_resX + px;
-        p_redCh[pixelIndex]   += color.p_red;
-        p_greenCh[pixelIndex] += color.p_green;
-        p_blueCh[pixelIndex]  += color.p_blue;
-        p_alphaCh[pixelIndex] += color.p_alpha;
-        p_redCh[pixelIndex]   *= 0.5f;
-        p_greenCh[pixelIndex] *= 0.5f;
-        p_blueCh[pixelIndex]  *= 0.5f;
-        p_alphaCh[pixelIndex] *= 0.5f;
+        p_redCh[pixelIndex]   /= 2;
+        p_greenCh[pixelIndex] /= 2;
+        p_blueCh[pixelIndex]  /= 2;
+        p_alphaCh[pixelIndex] /= 2;
+        p_redCh[pixelIndex]   += (color.p_red   / 2);
+        p_greenCh[pixelIndex] += (color.p_green / 2);
+        p_blueCh[pixelIndex]  += (color.p_blue  / 2);
+        p_alphaCh[pixelIndex] += (color.p_alpha / 2);
     }
 
 }

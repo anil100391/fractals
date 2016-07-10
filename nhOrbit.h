@@ -7,10 +7,10 @@
 struct nhColor
 {
     nhColor() {}
-    nhColor( const float red,
-             const float green,
-             const float blue,
-             const float alpha )
+    nhColor( const uint8_t red,
+             const uint8_t green,
+             const uint8_t blue,
+             const uint8_t alpha )
     {
         p_red = red;
         p_green = green;
@@ -22,16 +22,16 @@ struct nhColor
     {
         time_t seed = clock();
         srand(seed);
-        p_red   = rand() /(float) RAND_MAX;
-        p_green = rand() /(float) RAND_MAX;
-        p_blue  = rand() /(float) RAND_MAX;
-        p_alpha = rand() /(float) RAND_MAX;
+        p_red   = (uint8_t)(rand() * 255.0f / RAND_MAX);
+        p_green = (uint8_t)(rand() * 255.0f / RAND_MAX);
+        p_blue  = (uint8_t)(rand() * 255.0f / RAND_MAX);
+        p_alpha = (uint8_t)(rand() * 255.0f / RAND_MAX);
     }
 
-    float p_red,
-          p_green,
-          p_blue,
-          p_alpha;
+    uint8_t    p_red,
+               p_green,
+               p_blue,
+               p_alpha;
 };
 
 // -------------------------------------------------------------------------- //
@@ -101,10 +101,10 @@ bool nhOrbit::InitializeFromFile( const char *fileName )
         row = colorInfo + ii * stride;
         for ( int jj = 0; jj < width; ++jj )
         {
-            p_blueCh[ii*width+jj]  = int(*row++)/255.0;
-            p_greenCh[ii*width+jj] = int(*row++)/255.0;
-            p_redCh[ii*width+jj]   = int(*row++)/255.0;
-            p_alphaCh[ii*width+jj] = int(*row++)/255.0;
+            p_blueCh[ii*width+jj]  = uint8_t(*row++);
+            p_greenCh[ii*width+jj] = uint8_t(*row++);
+            p_redCh[ii*width+jj]   = uint8_t(*row++);
+            p_alphaCh[ii*width+jj] = uint8_t(*row++);
         }
     }
     cairo_surface_destroy(surface);
