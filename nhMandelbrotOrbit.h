@@ -43,7 +43,7 @@ void nhMandelbrotOrbit::DrawNewOrbit( const nhColor &color )
 
     double x0 = 0.0f;
     double y0 = 0.0f;
-    int px, py, pixelIndex, count = 0;
+    int px = 0, py = 0, pixelIndex, count = 0;
     while ( x0 * x0 + y0 * y0 < 4 && count < p_orbitLimit )
     {
         double fx = x0 * x0 - y0 * y0 + x;
@@ -52,7 +52,10 @@ void nhMandelbrotOrbit::DrawNewOrbit( const nhColor &color )
         y0 = fy;
         count++;
 
-        nhImage::PixelAtPoint(x0, y0, px, py);
+        if ( !nhImage::PixelAtPoint(x0, y0, px, py) )
+        {
+            continue;
+        }
         // Average the color info at this pixel
         pixelIndex = py * p_resX + px;
         p_redCh[pixelIndex]   /= 2;
