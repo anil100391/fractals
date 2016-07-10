@@ -68,10 +68,6 @@ protected:
         free(p_alphaCh);
     }
 
-    // Image resolution
-    int     p_resX,
-            p_resY;
-
     // Color channels
     uint8_t *p_redCh,
             *p_greenCh,
@@ -83,6 +79,10 @@ protected:
             p_xMax,
             p_yMin,
             p_yMax;
+
+    // Image resolution
+    int     p_resX,
+            p_resY;
 
     bool    p_initialized;
 
