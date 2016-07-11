@@ -43,7 +43,7 @@ void nhMandelbrotOrbit::DrawNewOrbit( const nhColor &color )
 
     double x0 = 0.0f;
     double y0 = 0.0f;
-    int px, py, pixelIndex, count = 0;
+    int px = 0, py = 0, pixelIndex, count = 0;
     while ( x0 * x0 + y0 * y0 < 4 && count < p_orbitLimit )
     {
         double fx = x0 * x0 - y0 * y0 + x;
@@ -52,17 +52,20 @@ void nhMandelbrotOrbit::DrawNewOrbit( const nhColor &color )
         y0 = fy;
         count++;
 
-        nhImage::PixelAtPoint(x0, y0, px, py);
+        if ( !nhImage::PixelAtPoint(x0, y0, px, py) )
+        {
+            continue;
+        }
         // Average the color info at this pixel
         pixelIndex = py * p_resX + px;
-        p_redCh[pixelIndex]   += color.p_red;
-        p_greenCh[pixelIndex] += color.p_green;
-        p_blueCh[pixelIndex]  += color.p_blue;
-        p_alphaCh[pixelIndex] += color.p_alpha;
-        p_redCh[pixelIndex]   *= 0.5f;
-        p_greenCh[pixelIndex] *= 0.5f;
-        p_blueCh[pixelIndex]  *= 0.5f;
-        p_alphaCh[pixelIndex] *= 0.5f;
+        p_redCh[pixelIndex]   /= 2;
+        p_greenCh[pixelIndex] /= 2;
+        p_blueCh[pixelIndex]  /= 2;
+        p_alphaCh[pixelIndex] /= 2;
+        p_redCh[pixelIndex]   += (color.p_red   / 2);
+        p_greenCh[pixelIndex] += (color.p_green / 2);
+        p_blueCh[pixelIndex]  += (color.p_blue  / 2);
+        p_alphaCh[pixelIndex] += (color.p_alpha / 2);
     }
 
 }

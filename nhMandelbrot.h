@@ -79,10 +79,10 @@ bool nhMandelbrot::InitColors( void )
                 gc = 0.60f * weight + 0.0f * (1.0f - weight) ;
                 bc = 0.00f * weight + 0.0f * (1.0f - weight) ;
             }
-            p_redCh[jj * p_resX + ii]    = rc;
-            p_greenCh[jj * p_resX + ii]  = gc;
-            p_blueCh[jj * p_resX + ii]   = bc;
-            p_alphaCh[jj * p_resX + ii]  = 1.0f;
+            p_redCh[jj * p_resX + ii]    = (uint8_t)(rc * 255);
+            p_greenCh[jj * p_resX + ii]  = (uint8_t)(gc * 255);
+            p_blueCh[jj * p_resX + ii]   = (uint8_t)(bc * 255);
+            p_alphaCh[jj * p_resX + ii]  = 255;
         }
     }
     }
@@ -90,4 +90,3 @@ bool nhMandelbrot::InitColors( void )
 }
 
 #endif // _NH_MANDELBROT_H
-

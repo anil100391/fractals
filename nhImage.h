@@ -1,5 +1,6 @@
 #include <omp.h>
-#include<stdio.h>
+#include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <iostream>
 #include <cairo/cairo.h>
@@ -46,11 +47,11 @@ public:
     // corresponds to coordinate of the provided pixel corner
     bool PointAtPixel( const int px, const int py,
                        double &x, double &y,
-                       const PIXEL_CORNER loc = CENTER );
+                       const PIXEL_CORNER loc = CENTER ) const;
 
     // Gets the pixel lying on point
     bool PixelAtPoint( const double x, const double y,
-                       int &px, int &py );
+                       int &px, int &py ) const;
 
     bool IsInitialized() const
     {
@@ -67,12 +68,8 @@ protected:
         free(p_alphaCh);
     }
 
-    // Image resolution
-    int     p_resX,
-            p_resY;
-
     // Color channels
-    float   *p_redCh,
+    uint8_t *p_redCh,
             *p_greenCh,
             *p_blueCh,
             *p_alphaCh;
@@ -83,6 +80,10 @@ protected:
             p_yMin,
             p_yMax;
 
+    // Image resolution
+    int     p_resX,
+            p_resY;
+
     bool    p_initialized;
 
 };
@@ -91,7 +92,7 @@ protected:
 // -------------------------------------------------------------------------- //
 bool nhImage::PointAtPixel( const int px, const int py,
                             double &x, double &y,
-                            const nhImage::PIXEL_CORNER loc )
+                            const nhImage::PIXEL_CORNER loc ) const
 {
     if ( px < 0 || px > p_resX || py < 0 || py > p_resY )
     {
@@ -132,6 +133,7 @@ bool nhImage::PointAtPixel( const int px, const int py,
 // -------------------------------------------------------------------------- //
 // -------------------------------------------------------------------------- //
 bool nhImage::PixelAtPoint( const double x, const double y, int &px, int &py )
+                                                                           const
 {
     if ( x > p_xMax || x < p_xMin || y > p_yMax || y < p_yMin )
     {
@@ -183,14 +185,19 @@ void nhImage::RenderImage( const char* fileName, int numThreads )
     char localFileName[512];
     sprintf(localFileName, "%s%d", fileName, threadID);
     int startJJ = threadID * ( p_resY / omp_get_num_threads() );
+    double r(0.0f),
+           g(0.0f),
+           b(0.0f),
+           a(0.0f);
     for ( int jj = startJJ; jj < startJJ + p_resY / omp_get_num_threads(); ++jj )
     {
         for ( int ii = 0; ii < p_resX; ++ii )
         {
-            cairo_set_source_rgba(cr, p_redCh[jj * p_resX + ii],
-                                      p_greenCh[jj * p_resX + ii],
-                                      p_blueCh[jj * p_resX + ii],
-                                      p_alphaCh[jj * p_resX + ii]);
+            r = (double)p_redCh[jj * p_resX + ii]   / 255.0f;
+            g = (double)p_greenCh[jj * p_resX + ii] / 255.0f;
+            b = (double)p_blueCh[jj * p_resX + ii]  / 255.0f;
+            a = (double)p_alphaCh[jj * p_resX + ii] / 255.0f;
+            cairo_set_source_rgba(cr, r, g, b, a);
             cairo_rectangle(cr, ii, jj, 1, 1);
             cairo_fill(cr);
         }
@@ -211,10 +218,10 @@ bool nhImage::InitColors( void )
         return true;
     }
 
-    p_redCh   = (float *) malloc(p_resX * p_resY * sizeof(float));
-    p_greenCh = (float *) malloc(p_resX * p_resY * sizeof(float));
-    p_blueCh  = (float *) malloc(p_resX * p_resY * sizeof(float));
-    p_alphaCh = (float *) malloc(p_resX * p_resY * sizeof(float));
+    p_redCh   = (uint8_t *) malloc(p_resX * p_resY * sizeof(uint8_t));
+    p_greenCh = (uint8_t *) malloc(p_resX * p_resY * sizeof(uint8_t));
+    p_blueCh  = (uint8_t *) malloc(p_resX * p_resY * sizeof(uint8_t));
+    p_alphaCh = (uint8_t *) malloc(p_resX * p_resY * sizeof(uint8_t));
 
     if ( !p_redCh || !p_greenCh || !p_blueCh || !p_alphaCh )
     {
@@ -226,10 +233,10 @@ bool nhImage::InitColors( void )
     {
         for ( int ii = 0; ii < p_resX; ++ii )
         {
-            p_redCh[jj * p_resX + ii]   = 0.0f;
-            p_greenCh[jj * p_resX + ii] = 0.0f;
-            p_blueCh[jj * p_resX + ii]  = 0.0f;
-            p_alphaCh[jj * p_resX + ii] = 0.0f;
+            p_redCh[jj * p_resX + ii]   = 0;
+            p_greenCh[jj * p_resX + ii] = 0;
+            p_blueCh[jj * p_resX + ii]  = 0;
+            p_alphaCh[jj * p_resX + ii] = 0;
         }
     }
     p_initialized = true;
