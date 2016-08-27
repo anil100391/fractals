@@ -1,0 +1,7 @@
+# fractals
+fractal rendering using cairographics library
+
+The core of the code is an nhImage class which represents an image.
+Classes relevant to different fractals and image painting methods
+can be/has been derived from this class to generate png images.
+
