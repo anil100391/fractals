@@ -16,22 +16,24 @@ int main(int argc, char *argv[])
 
 #pragma omp parallel
 {
-    nhMandelbrotOrbit* image = new nhMandelbrotOrbit(-2.0f, 1.0f, -1.0f, 1.0f, 10400, 7200);
+    nhMandelbrotOrbit* image = new nhMandelbrotOrbit(-2.0f, 1.0f, -1.0f, 1.0f, 10400, 7200, 50000, 100000);
     if ( !image->InitColors() )
     {
         exit(0);
     }
 
-    image->SetOrbitLimit(100000);
+    char fileName[256];
+    sprintf(fileName, "new%d.png0", omp_get_thread_num());
+    image->InitializeFromFile(fileName);
+
     nhColor color;
-    for ( int ii = 0; ii < 10000; ++ii )
+    for ( int ii = 0; ii < 500; ++ii )
     {
+        std::cout << "Rendering orbit: " << ii << std::endl;
         color.Randomize();
         image->DrawNewOrbit(color);
     }
 
-    char fileName[256];
-    sprintf(fileName, "new%d.png", omp_get_thread_num());
     image->RenderImage(fileName);
     delete image;
 }

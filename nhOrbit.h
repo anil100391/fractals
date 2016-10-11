@@ -50,20 +50,11 @@ public:
 
     virtual ~nhOrbit() {}
 
-    // Maximum number of iterations to do while drawing orbit of z
-    void SetOrbitLimit(int limit)
-    {
-        p_orbitLimit = limit;
-    }
-
     // Updates the color space to match the image file. Hence can be used
     // to draw orbit of new z's over already drawn old orbits
     bool InitializeFromFile( const char *fileName );
 
     virtual void DrawNewOrbit( const nhColor &color ) = 0;
-
-protected:
-    int p_orbitLimit;
 
 };
 

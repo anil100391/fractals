@@ -10,8 +10,11 @@ public:
 
     nhMandelbrotOrbit( double xmin, double xmax,
                        double ymin, double ymax,
-                       int resX, int resY )
+                       int resX, int resY,
+                       int minIter, int maxIter )
         : nhOrbit(xmin, xmax, ymin, ymax, resX, resY)
+        , p_minimumIterations(minIter)
+        , p_maximumIterations(maxIter)
     {
     }
 
@@ -19,12 +22,20 @@ public:
 
     virtual void DrawNewOrbit( const nhColor &color );
 
-
 private:
+
     void GetAStartingPoint( double &x, double &y ) const;
     int  IsInMandelbrotSet( const double &x,
                             const double &y,
                             const int &maxIter ) const;
+
+    bool PointHasOrbitBetween( const double &cx,
+                               const double &cy,
+                               int minIter,
+                               int maxIter ) const;
+
+    int  p_maximumIterations;
+    int  p_minimumIterations;
 };
 
 // -------------------------------------------------------------------------- //
@@ -44,7 +55,7 @@ void nhMandelbrotOrbit::DrawNewOrbit( const nhColor &color )
     double x0 = 0.0f;
     double y0 = 0.0f;
     int px = 0, py = 0, pixelIndex, count = 0;
-    while ( x0 * x0 + y0 * y0 < 4 && count < p_orbitLimit )
+    while ( x0 * x0 + y0 * y0 < 4 && count < p_maximumIterations )
     {
         double fx = x0 * x0 - y0 * y0 + x;
         double fy = 2.0 * x0 * y0 + y;
@@ -87,15 +98,15 @@ void nhMandelbrotOrbit::GetAStartingPoint( double &x, double &y ) const
         x = (p_xMax - p_xMin) * x + p_xMin;
         y = (p_yMax - p_yMin) * y + p_yMin;
     }
-    while ( !IsInMandelbrotSet(x,y, p_orbitLimit) );
-    //while ( IsInMandelbrotSet(x,y, p_orbitLimit) != 2 );
+    while (!PointHasOrbitBetween(x, y,
+                                 p_minimumIterations, p_maximumIterations));
 }
 
 // -------------------------------------------------------------------------- //
 // -------------------------------------------------------------------------- //
 int nhMandelbrotOrbit::IsInMandelbrotSet( const double &cx,
-                                           const double &cy,
-                                           const int &maxIter ) const
+                                          const double &cy,
+                                          const int &maxIter ) const
 {
     // returns 1 if (cx, cy) is inside the cardoid or circle features
     // returns 2 if orbit of (cx, cy) remain bounded for maxIter
@@ -135,4 +146,43 @@ int nhMandelbrotOrbit::IsInMandelbrotSet( const double &cx,
     }
 
     return 0;
+}
+
+// -------------------------------------------------------------------------- //
+// -------------------------------------------------------------------------- //
+bool nhMandelbrotOrbit::PointHasOrbitBetween( const double &cx,
+                                              const double &cy,
+                                              int minIter,
+                                              int maxIter ) const
+{
+    double x0 = 0.0,
+           y0 = 0.0;
+
+    double p = sqrt( (cx - 0.25) * (cx - 0.25) + cy * cy );
+    bool cardioid_cond = cx - (p - 2*p*p + 0.25) < 0;
+
+    if ( cardioid_cond )
+    {
+        return false;
+    }
+
+    bool circle_cond = (cx + 1) * (cx + 1) + cy * cy < 0.0625;
+
+    if ( circle_cond )
+    {
+        return false;
+    }
+
+    int count = 0;
+    // Iteration of 0 under f(z) = z^2 + c //
+    while ( x0 * x0 + y0 * y0 < 4 && count < maxIter )
+    {
+        double fx = x0 * x0 - y0 * y0 + cx;
+        double fy = 2.0 * x0 * y0 + cy;
+        x0 = fx;
+        y0 = fy;
+        count++;
+    }
+
+    return (count > p_minimumIterations) && (count < p_maximumIterations);
 }
