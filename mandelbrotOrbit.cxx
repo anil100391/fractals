@@ -1,4 +1,5 @@
 #include "nhMandelbrotOrbit.h"
+#include <memory>
 
 int main(int argc, char *argv[])
 {
@@ -16,7 +17,7 @@ int main(int argc, char *argv[])
 
 #pragma omp parallel
 {
-    nhMandelbrotOrbit* image = new nhMandelbrotOrbit(-2.0f, 1.0f, -1.0f, 1.0f, 10400, 7200, 50000, 100000);
+    auto image = std::unique_ptr<nhMandelbrotOrbit>(new nhMandelbrotOrbit(-2.0f, 1.0f, -1.0f, 1.0f, 10400, 7200, 50000, 100000));
     if ( !image->InitColors() )
     {
         exit(0);
@@ -35,7 +36,6 @@ int main(int argc, char *argv[])
     }
 
     image->RenderImage(fileName);
-    delete image;
 }
     return 0;
 }

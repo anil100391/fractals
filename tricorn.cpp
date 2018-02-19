@@ -1,9 +1,10 @@
 #include "nhTricorn.h"
+#include <memory>
 using namespace std;
 
 int main(int argc, char *argv[])
 {
-    nhTricorn* image = new nhTricorn(-2.0f, 2.0f, -2.0f, 2.0f, 4800, 4800, 1000);
+    auto image = std::unique_ptr<nhTricorn>(new nhTricorn(-2.0f, 2.0f, -2.0f, 2.0f, 4800, 4800, 1000));
     image->InitColors();
 
     int numThreads = -1;
@@ -19,7 +20,6 @@ int main(int argc, char *argv[])
 
 
     image->RenderImage("tricorn.png", numThreads);
-    delete image;
 
     return 0;
 }
