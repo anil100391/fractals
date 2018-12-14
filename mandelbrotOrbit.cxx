@@ -1,31 +1,20 @@
-#include "nhMandelbrotOrbit.h"
 #include <memory>
+#include <iostream>
+#include "nhOrbit.h"
+
+void mandelbrotIterator(double &x, double &y, double cx, double cy)
+{
+    // z = z * z + c
+    double lx = x * x - y * y + cx;
+    double ly = 2 * x * y + cy;
+    x = lx;
+    y = ly;
+}
 
 int main(int argc, char *argv[])
 {
-    int numThreads = -1;
-    if ( argc > 1 )
-    {
-        numThreads = atoi(argv[1]);
-    }
-
-    if ( numThreads > 0 )
-    {
-        omp_set_num_threads(numThreads);
-        std::cout << "Requested " << numThreads << " threads for rendering\n";
-    }
-
-#pragma omp parallel
-{
-    auto image = std::unique_ptr<nhMandelbrotOrbit>(new nhMandelbrotOrbit(-2.0f, 1.0f, -1.0f, 1.0f, 10400, 7200, 50000, 100000));
-    if ( !image->InitColors() )
-    {
-        exit(0);
-    }
-
-    char fileName[256];
-    sprintf(fileName, "new%d.png0", omp_get_thread_num());
-    image->InitializeFromFile(fileName);
+    auto image = std::make_unique<nhOrbit>(mandelbrotIterator, -2.0f, 1.0f, -1.0f, 1.0f, 256*3, 256*2);
+    image->SetIterations(1000);
 
     nhColor color;
     for ( int ii = 0; ii < 500; ++ii )
@@ -35,7 +24,5 @@ int main(int argc, char *argv[])
         image->DrawNewOrbit(color);
     }
 
-    image->RenderImage(fileName);
-}
     return 0;
 }
