@@ -114,6 +114,7 @@
   <ItemGroup>
     <ClInclude Include="nhImage.h" />
     <ClInclude Include="nhOrbit.h" />
+    <ClInclude Include="nhRandom.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

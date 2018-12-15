@@ -1,5 +1,6 @@
 #include <vector>
 #include <cstdint>
+#include "nhRandom.h"
 
 #ifndef _NHIMAGE_H
 #define _NHIMAGE_H
@@ -11,8 +12,8 @@ struct nhColor
 {
     nhColor()
         : _red(0),
-          _blue(0),
           _green(0),
+          _blue(0),
           _alpha(std::numeric_limits<uint8_t>::max())
     {}
 
@@ -23,6 +24,12 @@ struct nhColor
 
     void Randomize()
     {
+        static nhRandomUniformGenerator rg;
+        static std::uniform_int_distribution<> dis(0, 255);
+        _red   = dis(rg.Generator());
+        _green = dis(rg.Generator());
+        _blue  = dis(rg.Generator());
+        _alpha = dis(rg.Generator());
     }
 
     uint8_t    _red,
@@ -53,7 +60,9 @@ public:
         , _yMax(ymax)
         , _resX(resX)
         , _resY(resY)
-    {}
+    {
+        InitColors();
+    }
 
     // Allocate memory for the rgba color space
     virtual void InitColors( void );

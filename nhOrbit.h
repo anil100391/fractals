@@ -1,6 +1,7 @@
 #include <ctime>
 #include <functional>
 #include "nhImage.h"
+#include "nhRandom.h"
 
 // -------------------------------------------------------------------------- //
 // -------------------------------------------------------------------------- //
@@ -77,6 +78,14 @@ void nhOrbit::SetIterations(unsigned int limit) noexcept
 }
 
 // -------------------------------------------------------------------------- //
+// -------------------------------------------------------------------------- //
 void nhOrbit::GetRandomPoint(double &x, double &y) const noexcept
 {
+    static nhRandomUniformGenerator rg;
+    static std::uniform_real_distribution<double> dis(0, 1);
+    double xnorm = dis(rg.Generator());
+    double ynorm = dis(rg.Generator());
+
+    x = _xMin + (_xMax - _xMin) * xnorm;
+    y = _yMin + (_yMax - _yMin) * ynorm;
 }
