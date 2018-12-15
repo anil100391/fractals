@@ -160,6 +160,12 @@ void nhImage::InitColors( void )
 void nhImage::BlendPixel( unsigned int px, unsigned int py,
                           const nhColor &color ) noexcept
 {
+    // simple averaging
+    uint8_t *pixel = &_pixels[4 * (py*_resX + px)];
+    pixel[0] = (pixel[0] >> 1) + (color._red   >> 1);
+    pixel[1] = (pixel[1] >> 1) + (color._green >> 1);
+    pixel[2] = (pixel[2] >> 1) + (color._blue  >> 1);
+    pixel[3] = (pixel[3] >> 1) + (color._alpha >> 1);
 }
 
 #endif // _NHIMAGE_H
