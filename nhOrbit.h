@@ -5,7 +5,7 @@
 
 // -------------------------------------------------------------------------- //
 // -------------------------------------------------------------------------- //
-using fractalIterator = std::function<void(double&, double&, double, double)>;
+using fractalIterator = std::function<bool(double&, double&, double, double)>;
 
 // -------------------------------------------------------------------------- //
 // Class to paint the orbit of a number z = x + iy under some iterative rule  //
@@ -53,20 +53,17 @@ bool nhOrbit::InitializeFromFile(const char *fileName)
 // -------------------------------------------------------------------------- //
 void nhOrbit::DrawNewOrbit(const nhColor &color)
 {
-    double cx = 0.0, cy = 0.0;
+    double cx = 0.0, cy = 0.0, x = 0.0, y = 0.0;
     GetRandomPoint(cx, cy);
 
-    double x = cx, y = cy;
-
     unsigned int iter = 0;
-    while (++iter < _numIter)
+    while (++iter < _numIter && _iterator(x, y, cx, cy))
     {
         unsigned int px = 0, py = 0;
         if ( PixelAtPoint(x, y, px, py) )
         {
             BlendPixel(px, py, color);
         }
-        _iterator(x, y, cx, cy);
     }
 }
 

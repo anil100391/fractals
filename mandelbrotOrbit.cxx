@@ -2,13 +2,14 @@
 #include <iostream>
 #include "nhOrbit.h"
 
-void mandelbrotIterator(double &x, double &y, double cx, double cy)
+bool mandelbrotIterator(double &x, double &y, double cx, double cy)
 {
     // z = z * z + c
     double lx = x * x - y * y + cx;
     double ly = 2 * x * y + cy;
     x = lx;
     y = ly;
+    return true;
 }
 
 int main(int argc, char *argv[])
