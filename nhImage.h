@@ -10,13 +10,7 @@
 // -------------------------------------------------------------------------- //
 struct nhColor
 {
-    nhColor()
-        : _red(0),
-          _green(0),
-          _blue(0),
-          _alpha(std::numeric_limits<uint8_t>::max())
-    {}
-
+    nhColor() = default;
     nhColor( uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha )
         : _red(red), _green(green), _blue(blue), _alpha(alpha)
     {
@@ -32,10 +26,10 @@ struct nhColor
         _alpha = dis(rg.Generator());
     }
 
-    uint8_t    _red,
-               _green,
-               _blue,
-               _alpha;
+    uint8_t    _red   = 0;
+    uint8_t    _green = 0;
+    uint8_t    _blue  = 0;
+    uint8_t    _alpha = std::numeric_limits<uint8_t>::max();
 };
 
 // -------------------------------------------------------------------------- //
@@ -65,7 +59,7 @@ public:
     }
 
     // Allocate memory for the rgba color space
-    virtual void InitColors( void );
+    void InitColors( void );
 
     // Renders this image to a png file
     void RenderImage( const char* fileName, unsigned int numThreads = 1 );
