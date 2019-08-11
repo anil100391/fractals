@@ -1,9 +1,12 @@
+#ifndef _NHMANDELBROT_ORBIT_H_
+#define _NHMANDELBROT_ORBIT_H_
+
 #include <cmath>
 #include "nhOrbit.h"
 
-// -------------------------------------------------------------------------- //
-// Class to draw orbit of z under iteration of mandelbrot rule z = z^2 + c    //
-// -------------------------------------------------------------------------- //
+// -----------------------------------------------------------------------------
+// Class to draw orbit of z under iteration of mandelbrot rule z = z^2 + c
+// -----------------------------------------------------------------------------
 class nhMandelbrotOrbit : public nhOrbit
 {
 public:
@@ -18,7 +21,7 @@ public:
     {
     }
 
-    virtual ~nhMandelbrotOrbit() {}
+    virtual ~nhMandelbrotOrbit() = default;
 
     virtual void DrawNewOrbit( const nhColor &color );
 
@@ -38,12 +41,12 @@ private:
     int  p_minimumIterations;
 };
 
-// -------------------------------------------------------------------------- //
-// -------------------------------------------------------------------------- //
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 void nhMandelbrotOrbit::DrawNewOrbit( const nhColor &color )
 {
-    double x = 0.0f,
-           y = 0.0f;
+    double x = 0.0;
+    double y = 0.0;
 
     GetAStartingPoint(x,y);
 
@@ -52,8 +55,8 @@ void nhMandelbrotOrbit::DrawNewOrbit( const nhColor &color )
     // change the color information stored at each pixel starting point lands
     // going through the above transformation
 
-    double x0 = 0.0f;
-    double y0 = 0.0f;
+    double x0 = 0.0;
+    double y0 = 0.0;
     int px = 0, py = 0, pixelIndex, count = 0;
     while ( x0 * x0 + y0 * y0 < 4 && count < p_maximumIterations )
     {
@@ -69,24 +72,24 @@ void nhMandelbrotOrbit::DrawNewOrbit( const nhColor &color )
         }
         // Average the color info at this pixel
         pixelIndex = py * p_resX + px;
-        p_redCh[pixelIndex]   /= 2;
-        p_greenCh[pixelIndex] /= 2;
-        p_blueCh[pixelIndex]  /= 2;
-        p_alphaCh[pixelIndex] /= 2;
-        p_redCh[pixelIndex]   += (color.p_red   / 2);
-        p_greenCh[pixelIndex] += (color.p_green / 2);
-        p_blueCh[pixelIndex]  += (color.p_blue  / 2);
-        p_alphaCh[pixelIndex] += (color.p_alpha / 2);
+        uint8_t *pixel = &p_colorData[4*pixelIndex];
+        pixel[0] /= 2;
+        pixel[1] /= 2;
+        pixel[2] /= 2;
+        pixel[3] /= 2;
+        pixel[0] += (color.p_red   / 2);
+        pixel[1] += (color.p_green / 2);
+        pixel[2] += (color.p_blue  / 2);
+        pixel[3] += (color.p_alpha / 2);
     }
-
 }
 
-// -------------------------------------------------------------------------- //
-// -------------------------------------------------------------------------- //
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 void nhMandelbrotOrbit::GetAStartingPoint( double &x, double &y ) const
 {
-    x = 0.0f;
-    y = 0.0f;
+    x = 0.0;
+    y = 0.0;
 
     clock_t seed = clock();
     srand(seed);
@@ -102,8 +105,8 @@ void nhMandelbrotOrbit::GetAStartingPoint( double &x, double &y ) const
                                  p_minimumIterations, p_maximumIterations));
 }
 
-// -------------------------------------------------------------------------- //
-// -------------------------------------------------------------------------- //
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 int nhMandelbrotOrbit::IsInMandelbrotSet( const double &cx,
                                           const double &cy,
                                           const int &maxIter ) const
@@ -186,3 +189,5 @@ bool nhMandelbrotOrbit::PointHasOrbitBetween( const double &cx,
 
     return (count > p_minimumIterations) && (count < p_maximumIterations);
 }
+
+#endif // _NHMANDELBROT_ORBIT_H_

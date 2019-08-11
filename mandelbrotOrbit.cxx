@@ -3,32 +3,17 @@
 
 int main(int argc, char *argv[])
 {
-    int numThreads = -1;
-    if ( argc > 1 )
-    {
-        numThreads = atoi(argv[1]);
-    }
-
-    if ( numThreads > 0 )
-    {
-        omp_set_num_threads(numThreads);
-        std::cout << "Requested " << numThreads << " threads for rendering\n";
-    }
-
-#pragma omp parallel
-{
-    auto image = std::unique_ptr<nhMandelbrotOrbit>(new nhMandelbrotOrbit(-2.0f, 1.0f, -1.0f, 1.0f, 10400, 7200, 50000, 100000));
+    auto image = std::make_unique<nhMandelbrotOrbit>(-2.0f, 1.0f, -1.0f, 1.0f, 1040, 720, 5000, 6000);
     if ( !image->InitColors() )
     {
         exit(0);
     }
 
-    char fileName[256];
-    sprintf(fileName, "new%d.png0", omp_get_thread_num());
+    const char* fileName = "orbit.png";
     image->InitializeFromFile(fileName);
 
     nhColor color;
-    for ( int ii = 0; ii < 500; ++ii )
+    for ( int ii = 0; ii < 10; ++ii )
     {
         std::cout << "Rendering orbit: " << ii << std::endl;
         color.Randomize();
@@ -36,6 +21,5 @@ int main(int argc, char *argv[])
     }
 
     image->RenderImage(fileName);
-}
     return 0;
 }

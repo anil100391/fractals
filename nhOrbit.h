@@ -1,9 +1,13 @@
+#ifndef _NHORBIT_H_
+#define _NHORBIT_H_
+
 #include <ctime>
+#include <cstring>
 #include "nhImage.h"
 
-// -------------------------------------------------------------------------- //
-// Structure to represent a RGBA color                                        //
-// -------------------------------------------------------------------------- //
+// -----------------------------------------------------------------------------
+// Structure to represent a RGBA color
+// -----------------------------------------------------------------------------
 struct nhColor
 {
     nhColor() {}
@@ -28,15 +32,15 @@ struct nhColor
         p_alpha = (uint8_t)(rand() * 255.0f / RAND_MAX);
     }
 
-    uint8_t    p_red,
-               p_green,
-               p_blue,
-               p_alpha;
+    uint8_t    p_red;
+    uint8_t    p_green;
+    uint8_t    p_blue;
+    uint8_t    p_alpha;
 };
 
-// -------------------------------------------------------------------------- //
-// Class to paint the orbit of a number z = x + iy under some iterative rule  //
-// -------------------------------------------------------------------------- //
+// -----------------------------------------------------------------------------
+// Class to paint the orbit of a number z = x + iy under some iterative rule
+// -----------------------------------------------------------------------------
 class nhOrbit : public nhImage
 {
 public:
@@ -48,28 +52,25 @@ public:
     {
     }
 
-    virtual ~nhOrbit() {}
+    virtual ~nhOrbit() = default;
 
     // Updates the color space to match the image file. Hence can be used
     // to draw orbit of new z's over already drawn old orbits
     bool InitializeFromFile( const char *fileName );
 
     virtual void DrawNewOrbit( const nhColor &color ) = 0;
-
 };
 
-// -------------------------------------------------------------------------- //
-// -------------------------------------------------------------------------- //
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 bool nhOrbit::InitializeFromFile( const char *fileName )
 {
-    if ( !IsInitialized() && !InitColors() )
+    if ( !InitColors() )
     {
         return false;
     }
 
-    cairo_surface_t    *surface = NULL;
-
-    surface = cairo_image_surface_create_from_png(fileName);
+    cairo_surface_t *surface = cairo_image_surface_create_from_png(fileName);
 
     if ( !surface )
     {
@@ -86,19 +87,11 @@ bool nhOrbit::InitializeFromFile( const char *fileName )
     std::cout<<"Height: "<<height<<std::endl;
     std::cout<<"Stride: "<<stride<<std::endl;
 
-    unsigned char *row;
-    for ( int ii = 0; ii < height; ++ii )
-    {
-        row = colorInfo + ii * stride;
-        for ( int jj = 0; jj < width; ++jj )
-        {
-            p_blueCh[ii*width+jj]  = uint8_t(*row++);
-            p_greenCh[ii*width+jj] = uint8_t(*row++);
-            p_redCh[ii*width+jj]   = uint8_t(*row++);
-            p_alphaCh[ii*width+jj] = uint8_t(*row++);
-        }
-    }
+    memcpy( &p_colorData[0], colorInfo, p_colorData.size() * sizeof(uint8_t) );
+
     cairo_surface_destroy(surface);
     std::cout<<"File read successfully\n";
     return true;
 }
+
+#endif // _NHORBIT_H_

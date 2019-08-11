@@ -1,7 +1,7 @@
-#include "nhImage.h"
+#ifndef _NH_MANDELBROT_H_
+#define _NH_MANDELBROT_H_
 
-#ifndef _NH_MANDELBROT_H
-#define _NH_MANDELBROT_H
+#include "nhImage.h"
 
 class nhMandelbrot : public nhImage
 {
@@ -15,16 +15,15 @@ public:
     {
     }
 
-    virtual ~nhMandelbrot() {}
+    virtual ~nhMandelbrot() = default;
 
     // Manipulates the color space so that to represent each pixel
     // belonging or not belonging to the mandelbrot set.
-    bool InitColors( void );
+    bool InitColors( void ) override;
 
 private:
 
     int p_maxIter;
-
 };
 
 // -------------------------------------------------------------------------- //
@@ -36,9 +35,6 @@ bool nhMandelbrot::InitColors( void )
         return false;
     }
 
-    #pragma omp parallel
-    {
-    #pragma omp for
     for ( int jj = 0; jj < p_resY; ++jj )
     {
         for ( int ii = 0; ii < p_resX; ++ii )
@@ -79,14 +75,15 @@ bool nhMandelbrot::InitColors( void )
                 gc = 0.60f * weight + 0.0f * (1.0f - weight) ;
                 bc = 0.00f * weight + 0.0f * (1.0f - weight) ;
             }
-            p_redCh[jj * p_resX + ii]    = (uint8_t)(rc * 255);
-            p_greenCh[jj * p_resX + ii]  = (uint8_t)(gc * 255);
-            p_blueCh[jj * p_resX + ii]   = (uint8_t)(bc * 255);
-            p_alphaCh[jj * p_resX + ii]  = 255;
+
+            uint8_t *pixel = &p_colorData[4*(jj * p_resX + ii)];
+            pixel[0] = (uint8_t)(rc * 255);
+            pixel[1] = (uint8_t)(gc * 255);
+            pixel[2] = (uint8_t)(bc * 255);
+            pixel[3] = 255;
         }
-    }
     }
     return true;
 }
 
-#endif // _NH_MANDELBROT_H
+#endif // _NH_MANDELBROT_H_

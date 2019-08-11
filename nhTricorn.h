@@ -1,7 +1,7 @@
-#include "nhImage.h"
+#ifndef _NH_TRICORN_H_
+#define _NH_TRICORN_H_
 
-#ifndef _NH_TRICORN_H
-#define _NH_TRICORN_H
+#include "nhImage.h"
 
 class nhTricorn : public nhImage
 {
@@ -15,16 +15,17 @@ public:
     {
     }
 
-    virtual ~nhTricorn() {}
+    virtual ~nhTricorn() = default;
 
-    bool InitColors( void );
+    bool InitColors( void ) override;
 
 private:
 
     int p_maxIter;
-
 };
 
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 bool nhTricorn::InitColors( void )
 {
     if ( !nhImage::InitColors() )
@@ -58,13 +59,14 @@ bool nhTricorn::InitColors( void )
             gc = 1.0f * weight + 0.0f * (1.0f - weight) ;
             bc = 1.0f * weight + 0.0f * (1.0f - weight) ;
 
-            p_redCh[jj * p_resX + ii]    = (uint8_t)(rc * 255);
-            p_greenCh[jj * p_resX + ii]  = (uint8_t)(gc * 255);
-            p_blueCh[jj * p_resX + ii]   = (uint8_t)(bc * 255);
-            p_alphaCh[jj * p_resX + ii]  = 255;
+            uint8_t *pixel = &p_colorData[4*(jj * p_resX + ii)];
+            pixel[0] = (uint8_t)(rc * 255);
+            pixel[1] = (uint8_t)(gc * 255);
+            pixel[2] = (uint8_t)(bc * 255);
+            pixel[3] = 255;
         }
     }
     return true;
 }
 
-#endif // _NH_TRICORN_H
+#endif // _NH_TRICORN_H_

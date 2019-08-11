@@ -1,19 +1,19 @@
-#include <omp.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
+#ifndef _NHIMAGE_H_
+#define _NHIMAGE_H_
+
+#include <vector>
+#include <cstdint>
 #include <iostream>
 #include <cairo/cairo.h>
 
-#ifndef _NHIMAGE_H
-#define _NHIMAGE_H
-
-// -------------------------------------------------------------------------- //
-//  Class to map a portion of Cartesian Plane to an Image of given resolution //
-// -------------------------------------------------------------------------- //
+// -----------------------------------------------------------------------------
+//  Class to map a portion of Cartesian Plane to an Image of given resolution
+// -----------------------------------------------------------------------------
 class nhImage
 {
 public:
+
+    nhImage() = delete;
 
     nhImage( double xmin, double xmax,
              double ymin, double ymax,
@@ -24,8 +24,9 @@ public:
         , p_yMax(ymax)
         , p_resX(resX)
         , p_resY(resY)
-        , p_initialized(false)
     {}
+
+    virtual ~nhImage() = default;
 
     enum PIXEL_CORNER
     {
@@ -34,14 +35,13 @@ public:
         LOWER_RIGHT,
         UPPER_RIGHT,
         UPPER_LEFT,
-        ALL_CORNERS
     };
 
-    // Allocate memory for the rgba color space
+    // initializes pixels of the image
     virtual bool InitColors( void );
 
     // Renders this image to a png file
-    void RenderImage( const char* fileName, int numThreads = -1 );
+    void RenderImage( const char* fileName );
 
     // Gets the point (x,y) lying on pixel px, py which
     // corresponds to coordinate of the provided pixel corner
@@ -53,43 +53,24 @@ public:
     bool PixelAtPoint( const double x, const double y,
                        int &px, int &py ) const;
 
-    bool IsInitialized() const
-    {
-        return p_initialized;
-    }
-
 protected:
 
-    virtual ~nhImage()
-    {
-        free(p_redCh);
-        free(p_blueCh);
-        free(p_greenCh);
-        free(p_alphaCh);
-    }
-
-    // Color channels
-    uint8_t *p_redCh,
-            *p_greenCh,
-            *p_blueCh,
-            *p_alphaCh;
+    // pixel color info
+    std::vector<uint8_t> p_colorData;
 
     // Geometry corresponding to image
-    double  p_xMin,
-            p_xMax,
-            p_yMin,
-            p_yMax;
+    double  p_xMin;
+    double  p_xMax;
+    double  p_yMin;
+    double  p_yMax;
 
     // Image resolution
-    int     p_resX,
-            p_resY;
-
-    bool    p_initialized;
-
+    int     p_resX;
+    int     p_resY;
 };
 
-// -------------------------------------------------------------------------- //
-// -------------------------------------------------------------------------- //
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 bool nhImage::PointAtPixel( const int px, const int py,
                             double &x, double &y,
                             const nhImage::PIXEL_CORNER loc ) const
@@ -130,8 +111,8 @@ bool nhImage::PointAtPixel( const int px, const int py,
     return true;
 }
 
-// -------------------------------------------------------------------------- //
-// -------------------------------------------------------------------------- //
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 bool nhImage::PixelAtPoint( const double x, const double y, int &px, int &py )
                                                                            const
 {
@@ -149,98 +130,39 @@ bool nhImage::PixelAtPoint( const double x, const double y, int &px, int &py )
     return true; 
 }
 
-// -------------------------------------------------------------------------- //
-// -------------------------------------------------------------------------- //
-void nhImage::RenderImage( const char* fileName, int numThreads )
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+void nhImage::RenderImage( const char* fileName )
 {
-    // This function is implemented to make use of multiple machine cores
-    // to allow faster rendering of large images. It will split the image in
-    // number of threads available and and write them to fileName[threadnum]
-    if ( p_resX <= 0 || p_resY <= 0 )
-    {
-        std::cerr<<"Abort... Image resolution does not make sense\n";
+    if ( p_colorData.empty() )
+        // not yet initialied
         return;
-    }
 
-    std::cout<<"Rendering Image of resolution "<<p_resX<<"x"<<p_resY<<std::endl;
+    std::cout << "Rendering "<< p_resX << "x" << p_resY << " image\n";
 
-    if ( numThreads > 0 )
-    {
-        omp_set_num_threads(numThreads);
-    }
-    #pragma omp parallel
-    {
-    int threadID = omp_get_thread_num();
-    if ( threadID == 0 )
-    {
-        std::cout << "Working with " << omp_get_num_threads() << " threads\n";
-    }
-    cairo_surface_t    *surface;
-    cairo_t            *cr;
+    cairo_format_t imgFormat = CAIRO_FORMAT_ARGB32;
+    int rowStride = cairo_format_stride_for_width ( imgFormat, p_resX );
 
-    surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, p_resX, p_resY);
-    cr      = cairo_create(surface);
-    cairo_scale(cr, 1, 1);
-
-    char localFileName[512];
-    sprintf(localFileName, "%s%d", fileName, threadID);
-    int startJJ = threadID * ( p_resY / omp_get_num_threads() );
-    double r(0.0f),
-           g(0.0f),
-           b(0.0f),
-           a(0.0f);
-    for ( int jj = startJJ; jj < startJJ + p_resY / omp_get_num_threads(); ++jj )
-    {
-        for ( int ii = 0; ii < p_resX; ++ii )
-        {
-            r = (double)p_redCh[jj * p_resX + ii]   / 255.0f;
-            g = (double)p_greenCh[jj * p_resX + ii] / 255.0f;
-            b = (double)p_blueCh[jj * p_resX + ii]  / 255.0f;
-            a = (double)p_alphaCh[jj * p_resX + ii] / 255.0f;
-            cairo_set_source_rgba(cr, r, g, b, a);
-            cairo_rectangle(cr, ii, jj, 1, 1);
-            cairo_fill(cr);
-        }
-    }
-
-    cairo_surface_write_to_png(surface, localFileName);
-    cairo_destroy(cr);
+    cairo_surface_t *surface = cairo_image_surface_create_for_data( p_colorData.data(),
+                                                                    CAIRO_FORMAT_ARGB32,
+                                                                    p_resX,
+                                                                    p_resY,
+                                                                    rowStride );
+    cairo_surface_write_to_png(surface, fileName);
     cairo_surface_destroy(surface);
-    }
 }
 
-// -------------------------------------------------------------------------- //
-// -------------------------------------------------------------------------- //
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 bool nhImage::InitColors( void )
 {
-    if ( IsInitialized() )
+    if ( p_colorData.empty() )
     {
+        p_colorData.resize(4 * p_resX * p_resY, 0);
         return true;
     }
 
-    p_redCh   = (uint8_t *) malloc(p_resX * p_resY * sizeof(uint8_t));
-    p_greenCh = (uint8_t *) malloc(p_resX * p_resY * sizeof(uint8_t));
-    p_blueCh  = (uint8_t *) malloc(p_resX * p_resY * sizeof(uint8_t));
-    p_alphaCh = (uint8_t *) malloc(p_resX * p_resY * sizeof(uint8_t));
-
-    if ( !p_redCh || !p_greenCh || !p_blueCh || !p_alphaCh )
-    {
-        std::cout<<"Not enough memory to store color info. "<<std::endl;
-        return false;
-    }
-
-    for ( int jj = 0; jj < p_resY; ++jj )
-    {
-        for ( int ii = 0; ii < p_resX; ++ii )
-        {
-            p_redCh[jj * p_resX + ii]   = 0;
-            p_greenCh[jj * p_resX + ii] = 0;
-            p_blueCh[jj * p_resX + ii]  = 0;
-            p_alphaCh[jj * p_resX + ii] = 0;
-        }
-    }
-    p_initialized = true;
-    return true;
+    return false;
 }
 
-#endif // _NHIMAGE_H
+#endif // _NHIMAGE_H_
