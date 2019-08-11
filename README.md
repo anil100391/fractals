@@ -8,3 +8,7 @@ can be/has been derived from this class to generate png images.
 To compile any of this you need to have libcairo libraries.
 See how to get it installed for various platforms here https://cairographics.org
 
+Image Samples
+![orbits of 10 random points under mandelbrot rule image 1](images/img0.png)
+![orbits of 10 random points under mandelbrot rule image 2](images/img1.png)
+![orbits of large number of random points under mandelbrot rule image 3](images/lightlowres.png)
