@@ -4,6 +4,7 @@
 #include "nhImage.h"
 #include <thread>
 #include <functional>
+#include <algorithm>
 #include <cmath>
 
 // -----------------------------------------------------------------------------

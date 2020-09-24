@@ -3,6 +3,7 @@
 
 #include "nhImage.h"
 #include <cmath>
+#include <ctime>
 #include <fstream>
 #include <algorithm>
 
