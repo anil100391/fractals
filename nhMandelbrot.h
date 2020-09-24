@@ -17,13 +17,14 @@ public:
         : nhImage(xmin, xmax, ymin, ymax, resX, resY)
         , p_maxIter(maxIter)
     {
+        Paint();
     }
 
     virtual ~nhMandelbrot() = default;
 
     // Manipulates the color space so that to represent each pixel
     // belonging or not belonging to the mandelbrot set.
-    bool InitColors( void ) override;
+    bool Paint( void ) override;
 
 private:
 
@@ -75,9 +76,9 @@ int nhMandelbrot::IterationsToGetKnocked(int row, int col) const
 
 // -------------------------------------------------------------------------- //
 // -------------------------------------------------------------------------- //
-bool nhMandelbrot::InitColors( void )
+bool nhMandelbrot::Paint( void )
 {
-    if ( !nhImage::InitColors() )
+    if ( !nhImage::Paint() )
     {
         return false;
     }

@@ -38,10 +38,10 @@ public:
     };
 
     // initializes pixels of the image
-    virtual bool InitColors( void );
+    virtual bool Paint( void );
 
     // Renders this image to a png file
-    void RenderImage( const char* fileName );
+    void Render( const char* fileName );
 
     // Gets the point (x,y) lying on pixel px, py which
     // corresponds to coordinate of the provided pixel corner
@@ -132,7 +132,7 @@ bool nhImage::PixelAtPoint( const double x, const double y, int &px, int &py )
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
-void nhImage::RenderImage( const char* fileName )
+void nhImage::Render( const char* fileName )
 {
     if ( p_colorData.empty() )
         // not yet initialied
@@ -154,7 +154,7 @@ void nhImage::RenderImage( const char* fileName )
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
-bool nhImage::InitColors( void )
+bool nhImage::Paint( void )
 {
     if ( p_colorData.empty() )
     {

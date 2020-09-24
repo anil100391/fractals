@@ -20,13 +20,14 @@ public:
         , p_maxIter(maxIter)
         , p_minIter(minIter)
     {
+        Paint();
     }
 
     virtual ~nhNebulabrot() = default;
 
     // Manipulates the color space so that to represent each pixel
     // belonging or not belonging to the mandelbrot set.
-    bool InitColors( void ) override;
+    bool Paint( void ) override;
 
 private:
 
@@ -116,9 +117,9 @@ bool nhNebulabrot::PointHasOrbitBetween( double cx,
 
 // -------------------------------------------------------------------------- //
 // -------------------------------------------------------------------------- //
-bool nhNebulabrot::InitColors( void )
+bool nhNebulabrot::Paint( void )
 {
-    if ( !nhImage::InitColors() )
+    if ( !nhImage::Paint() )
     {
         return false;
     }
@@ -183,7 +184,7 @@ bool nhNebulabrot::InitColors( void )
         float density = 1.0f * hitCount / maxHits;
         density = std::pow(density, 0.85f);
         // density *= 2.0f;
-        std::clamp(density, 0.0f, 1.0f);
+        density = std::clamp(density, 0.0f, 1.0f);
         uint8_t intensity = static_cast<uint8_t>(255 * density);
 
         if ( intensity != 0 )

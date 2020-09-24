@@ -13,11 +13,12 @@ public:
         : nhImage(xmin, xmax, ymin, ymax, resX, resY)
         , p_maxIter(maxIter)
     {
+        Paint();
     }
 
     virtual ~nhTricorn() = default;
 
-    bool InitColors( void ) override;
+    bool Paint( void ) override;
 
 private:
 
@@ -26,9 +27,9 @@ private:
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
-bool nhTricorn::InitColors( void )
+bool nhTricorn::Paint( void )
 {
-    if ( !nhImage::InitColors() )
+    if ( !nhImage::Paint() )
     {
         return false;
     }

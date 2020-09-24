@@ -50,6 +50,7 @@ public:
              int resX, int resY )
         : nhImage(xmin, xmax, ymin, ymax, resX, resY)
     {
+        Paint();
     }
 
     virtual ~nhOrbit() = default;
@@ -65,7 +66,7 @@ public:
 // -----------------------------------------------------------------------------
 bool nhOrbit::InitializeFromFile( const char *fileName )
 {
-    if ( !InitColors() )
+    if ( !Paint() )
     {
         return false;
     }

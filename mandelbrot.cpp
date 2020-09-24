@@ -1,12 +1,18 @@
 #include "nhMandelbrot.h"
-#include <memory>
 
-using namespace std;
-
-int main(int argc, char *argv[])
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+int main( int argc, char *argv[] )
 {
-    auto image = std::make_unique<nhMandelbrot>(-2.0f, 1.0f, -1.0f, 1.0f, 1200, 800, 100);
-    image->InitColors();
-    image->RenderImage("mandelbrot.png");
+    const double xmin = -2.0f;
+    const double xmax = 1.0f;
+    const double ymin = -1.0f;
+    const double ymax = 1.0f;
+
+    int resx = 1200;
+    int resy = 800;
+    int iterations = 100;
+    nhMandelbrot image( xmin, xmax, ymin, ymax, resx, resy, iterations );
+    image.Render( "mandelbrot.png" );
     return 0;
 }

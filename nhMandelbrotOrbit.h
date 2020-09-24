@@ -14,11 +14,12 @@ public:
     nhMandelbrotOrbit( double xmin, double xmax,
                        double ymin, double ymax,
                        int resX, int resY,
-                       int minIter, int maxIter )
+                       int maxIter, int minIter )
         : nhOrbit(xmin, xmax, ymin, ymax, resX, resY)
-        , p_minimumIterations(minIter)
         , p_maximumIterations(maxIter)
+        , p_minimumIterations(minIter)
     {
+        Paint();
     }
 
     virtual ~nhMandelbrotOrbit() = default;

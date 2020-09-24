@@ -1,11 +1,19 @@
 #include "nhTricorn.h"
-#include <memory>
-using namespace std;
 
-int main(int argc, char *argv[])
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+int main( int argc, char *argv[] )
 {
-    auto image = std::make_unique<nhTricorn>(-2.0f, 2.0f, -2.0f, 2.0f, 1200, 1200, 1000);
-    image->InitColors();
-    image->RenderImage("tricorn.png");
+    const double xmin = -2.0f;
+    const double xmax = 2.0f;
+    const double ymin = -2.0f;
+    const double ymax = 2.0f;
+
+    int resx = 1200;
+    int resy = 1200;
+    int iterations = 1000;
+
+    nhTricorn image{ xmin, xmax, ymin, ymax, resx, resy, iterations };
+    image.Render( "tricorn.png" );
     return 0;
 }
