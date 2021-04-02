@@ -9,6 +9,7 @@ To compile any of this you need to have libcairo libraries.
 See how to get it installed for various platforms here https://cairographics.org
 
 Image Samples
-![orbits of 10 random points under mandelbrot rule image 1](gallery/img0.png)
-![orbits of 10 random points under mandelbrot rule image 2](gallery/img1.png)
-![orbits of large number of random points under mandelbrot rule image 3](gallery/lightlowres.png)
+| | | |
+|:-------------------------:|:-------------------------:|:-------------------------:|
+|![orbits of 10 random points under mandelbrot rule image 1](gallery/img0.png) orbits of 10 random points under mandelbrot rule|![orbits of 10 random points under mandelbrot rule image 2](gallery/img1.png) orbits of 10 random points under mandelbrot rule|![orbits of large number of random points under mandelbrot rule image 3](gallery/lightlowres.png) orbits of large number of random points under mandelbrot rule|
+|![famous mandelbrot set](gallery/mandelbrot.png) famous mandelbrot set|![variant of mandelbrot set nebulabrot](gallery/nebulabrot.png) nebulabrot a variant of mandelbrot set|![newton fractal](gallery/newton.png) newton fractal newton iterations to roots of cubic polynomial|
