@@ -206,6 +206,9 @@ void nhNewton::ComputeRow(int row)
     int jj = row;
     const float a0 = 0.233f;
     const float a1 = 1.609f;
+    static const float rootColors[3*3] = { 1.0, 0.5, 0.0,
+                                           0.0, 1.0, 0.0,
+                                           0.5, 0.7, 0.1 };
     for ( int ii = 0; ii < p_resX; ++ii )
     {
         int root = -1;
@@ -222,7 +225,11 @@ void nhNewton::ComputeRow(int row)
         pixel[2] = 0;
         pixel[3] = 255;
         if ( root != -1 )
-            pixel[root] = (uint8_t)(mixfac * 10 * 255);
+        {
+            pixel[0] = rootColors[3*root + 0] * (mixfac * 10 * 255);
+            pixel[1] = rootColors[3*root + 1] * (mixfac * 10 * 255);
+            pixel[2] = rootColors[3*root + 2] * (mixfac * 10 * 255);
+        }
     }
 }
 
